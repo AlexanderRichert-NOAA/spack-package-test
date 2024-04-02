@@ -38,19 +38,22 @@ inputs:
     default: 'x86_64'
   spack-externals:
     description: 'External packages for Spack to try to use'
-    require: false
+    required: false
     default: 'cmake gmake perl'
   spack-compiler:
     description: 'Set spec for Spack compiler (e.g., "gcc@12")'
-    require: false
+    required: false
   parallel-jobs:
     description: 'Set number of Spack parallel install jobs ("spack install -j/--jobs")'
-    require: false
+    required: false
     default: 2
   spack-root:
     description: 'Spack root directory name'
-    require: false
+    required: false
     default: 'spack-root'
+  cache-secret:
+    description: 'Secret for build cache'
+    required: false
 
 runs:
   using: "composite"
@@ -85,7 +88,7 @@ runs:
       run: |
         if [ "${{ inputs.use-build-cache }}" == true ]; then
           spack mirror add spack-build-cache oci://ghcr.io/AlexanderRichert-NOAA/spack-build-cache
-          spack mirror set --oci-username ${{ github.actor }} --oci-password "${{ secrets.SPACKBUILDCACHE }}" spack-build-cache
+          spack mirror set --oci-username ${{ github.actor }} --oci-password "${{ inputs.cache-secret }}" spack-build-cache
         fi
         spack env create test
         spack env activate test
