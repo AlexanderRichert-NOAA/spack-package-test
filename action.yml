@@ -20,10 +20,10 @@ inputs:
     description: 'Create build cache and save to GitHub Packages'
     required: false
     default: true
-#  upload-artifacts:
-#    description: 'Upload certain logs on job failure'
-#    required: false
-#    default: true
+  upload-artifacts:
+    description: 'Upload certain logs on job failure (options: always, never, on-failure)'
+    required: false
+    default: 'on-failure'
   repo-dir:
     description: 'Directory containing modified code to be tested (default is to download automatically)'
     required: false
@@ -31,15 +31,18 @@ inputs:
   spack-ref:
     description: 'Spack tag/branch/commit to use'
     required: false
-    default: develop
+    default: 'develop'
   cpu-target:
     description: 'Spack CPU target'
     required: false
-    default: x86_64
+    default: 'x86_64'
   spack-externals:
     description: 'External packages for Spack to try to use'
     require: false
     default: 'cmake gmake perl'
+  spack-compiler:
+    description: 'Set spec for Spack compiler (e.g., "gcc@12")'
+    require: false
 
 runs:
   using: "composite"
@@ -47,12 +50,12 @@ runs:
 
     - name: "Get the updated code if needed"
       uses: actions/checkout@v4
-      if: ${{ inputs.repo-dir == 'auto' }}
+      if: inputs.repo-dir == 'auto'
       with: 
         path: spack-devpkg-${{ inputs.package-name }}
 
     - name: "Point to existing code if needed"
-      if: ${{ inputs.repo-dir == 'auto' }}
+      if: inputs.repo-dir == 'auto'
       shell: bash
       run: |
         ln -s ${{ inputs.repo-dir }} spack-devpkg-${{ inputs.package-name }}
@@ -60,11 +63,11 @@ runs:
     - name: "Get Spack"
       uses: spack/setup-spack@v2
       with:
-        ref: ${{ inputs.spack-ref }}
+        ref: inputs.spack-ref
         path: spack
 
     - name: "Update recipe (if needed)"
-      if: ${{ inputs.custom-recipe != 'none' }}
+      if: inputs.custom-recipe != 'none'
       shell: bash
       run: |
         cp ${{ inputs.custom-recipe }} ${SPACK_ROOT}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
@@ -76,13 +79,24 @@ runs:
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
         spack add ${{ inputs.package-name }}@${{ inputs.package-version }} target=${{ inputs.cpu-target }} ${{ inputs.dependents-to-test }}
+        if [ ! -z "${{ inputs.spack-compiler }}" ]; then
+          spack compiler find ${{ inputs.spack-compiler }}
+          spack config add "packages:all:require:'@${{ inputs.spack-compiler }}'"
+        fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
         if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         spack concretize &> spack-concretize.log
         spack install --test root --no-check-signature
 
     - name: "Update Spack build cache"
-      if: ${{ inputs.use-build-cache }}
+      if: inputs.use-build-cache
       shell: spack-bash {0}
       run: |
         spack buildcache push --only dependencies --unsigned spack-build-cache ${{ inputs.package-name }}
+
+    - name: "Upload various debug info"
+      uses: actions/upload-artifact@v3
+      if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
+      with:
+        name: spack-package-test-artifacts-${{ github.sha }}
+        path: ${{ env.SPACK_ENV }}/spack.yaml ${{ env.SPACK_ENV }}/spack-concretize.log
