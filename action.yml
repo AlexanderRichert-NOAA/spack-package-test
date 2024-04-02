@@ -83,7 +83,8 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
-        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
+#        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
+        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/AlexanderRichert-NOAA/spack-build-cache  ; fi
         spack env create test
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
@@ -93,7 +94,8 @@ runs:
           spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
-        spack concretize 2> spack-concretize-err.log 1> spack-concretize-out.log
+        spack concretize 2> ${GITHUB_WORKSPACE}/spack-concretize-err.log 1> ${GITHUB_WORKSPACE}/spack-concretize-out.log
+        realpath ${SPACK_ENV}/spack.yaml
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
 
     - name: "Update Spack build cache"
@@ -107,4 +109,4 @@ runs:
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
         name: spack-package-test-artifacts-${{ github.sha }}
-        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml ${{ github.workspace}}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml/spack-concretize.log
+        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml ${{ github.workspace}}/spack-concretize-out.log ${{ github.workspace}}/spack-concretize-err.log
