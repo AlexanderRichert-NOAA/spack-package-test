@@ -70,7 +70,7 @@ runs:
       run: |
         spack env create test
         spack env activate test
-        spack develop --no-clone --path spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
+        spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
         spack add ${{ inputs.package-name }}@${{ inputs.package-version }} target=${{ inputs.cpu-target }} ${{ inputs.dependents-to-test }}
         if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         spack concretize &> spack-concretize.log
