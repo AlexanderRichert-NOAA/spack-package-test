@@ -16,7 +16,7 @@ inputs:
   dependents-to-test:
     description: 'Spack packages to also run unit tests for (space-delimited list)'
     required: false
-  make-build-cache:
+  use-build-cache:
     description: 'Create build cache and save to GitHub Packages'
     required: false
     default: true
@@ -57,7 +57,6 @@ runs:
       uses: spack/setup-spack@v2
       with:
         ref: ${{ inputs.spack-ref }}
-        build-cache: ${{ inputs.make-build-cache }}
         path: spack
 
     - name: "Update recipe (if needed)"
@@ -67,18 +66,18 @@ runs:
         cp ${{ inputs.custom-recipe }} ${SPACK_ROOT}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
     - name: "Do Spack installation and tests"
-      shell: bash
+      shell: spack-bash {0}
       run: |
         spack env create test
         spack env activate test
         spack develop --no-clone --path spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
         spack add ${{ inputs.package-name }}@${{ inputs.package-version }} target=${{ inputs.cpu-target }} ${{ inputs.dependents-to-test }}
-        spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache
+        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         spack concretize &> spack-concretize.log
         spack install --test root --no-check-signature
 
     - name: "Update Spack build cache"
-      if: ${{ inputs.make-build-cache }}
-      shell: bash
+      if: ${{ inputs.use-build-cache }}
+      shell: spack-bash {0}
       run: |
-        spack buildcache push --only dependencies --unsigned spack-build-cache grib-util
+        spack buildcache push --only dependencies --unsigned spack-build-cache ${{ inputs.package-name }}
