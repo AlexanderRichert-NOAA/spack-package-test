@@ -43,6 +43,10 @@ inputs:
   spack-compiler:
     description: 'Set spec for Spack compiler (e.g., "gcc@12")'
     require: false
+  parallel-jobs:
+    description: 'Set number of Spack parallel install jobs ("spack install -j/--jobs")'
+    require: false
+    default: 2
 
 runs:
   using: "composite"
@@ -85,8 +89,8 @@ runs:
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
         if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
-        spack concretize &> spack-concretize.log
-        spack install --test root --no-check-signature
+        spack concretize 2> spack-concretize-err.log 1> spack-concretize-out.log
+        spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
 
     - name: "Update Spack build cache"
       if: inputs.use-build-cache
