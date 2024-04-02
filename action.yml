@@ -43,12 +43,12 @@ runs:
 
     - name: "Get the updated code if needed"
       uses: actions/checkout@v4
-      if: ${{ inputs.repo-dir == "auto" }}
+      if: ${{ inputs.repo-dir == 'auto' }}
       with: 
         path: spack-devpkg-${{ inputs.package-name }}
 
     - name: "Point to existing code if needed"
-      if: ${{ inputs.repo-dir == "auto" }}
+      if: ${{ inputs.repo-dir == 'auto' }}
       shell: bash
       run: |
         ln -s ${{ inputs.repo-dir }} spack-devpkg-${{ inputs.package-name }}
@@ -61,7 +61,7 @@ runs:
         path: spack
 
     - name: "Update recipe (if needed)"
-      if: ${{ inputs.custom-recipe != "none" }}
+      if: ${{ inputs.custom-recipe != 'none' }}
       shell: bash
       run: |
         cp ${{ inputs.custom-recipe }} ${SPACK_ROOT}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
