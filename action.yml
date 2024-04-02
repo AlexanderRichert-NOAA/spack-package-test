@@ -81,7 +81,7 @@ runs:
         spack add ${{ inputs.package-name }}@${{ inputs.package-version }} target=${{ inputs.cpu-target }} ${{ inputs.dependents-to-test }}
         if [ ! -z "${{ inputs.spack-compiler }}" ]; then
           spack compiler find ${{ inputs.spack-compiler }}
-          spack config add "packages:all:require:'@${{ inputs.spack-compiler }}'"
+          spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
         if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
@@ -99,4 +99,4 @@ runs:
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
         name: spack-package-test-artifacts-${{ github.sha }}
-        path: ${{ env.SPACK_ENV }}/spack.yaml ${{ env.SPACK_ENV }}/spack-concretize.log
+        path: ${{ env.SPACK_ROOT }}/var/spack/environments/test/spack.yaml ${{ env.SPACK_ROOT }}/var/spack/environments/test/spack.yaml/spack-concretize.log
