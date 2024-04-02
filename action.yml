@@ -103,6 +103,7 @@ runs:
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
         spack concretize 2> ${GITHUB_WORKSPACE}/spack-concretize-err.log 1> ${GITHUB_WORKSPACE}/spack-concretize-out.log
+        cat ${GITHUB_WORKSPACE}/spack-concretize-out.log
         realpath ${SPACK_ENV}/spack.yaml
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
 
