@@ -83,7 +83,6 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
-#        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/AlexanderRichert-NOAA/spack-build-cache  ; fi
         spack env create test
         spack env activate test
