@@ -63,7 +63,7 @@ runs:
     - name: "Get Spack"
       uses: spack/setup-spack@v2
       with:
-        ref: inputs.spack-ref
+        ref: ${{ inputs.spack-ref }}
         path: spack
 
     - name: "Update recipe (if needed)"
