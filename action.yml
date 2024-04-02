@@ -83,6 +83,7 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
+        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         spack env create test
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
@@ -92,7 +93,6 @@ runs:
           spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
-        if [ "${{ inputs.use-build-cache }}" == true ]; then spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache  ; fi
         spack concretize 2> spack-concretize-err.log 1> spack-concretize-out.log
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
 
