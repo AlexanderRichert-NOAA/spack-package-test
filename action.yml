@@ -47,6 +47,10 @@ inputs:
     description: 'Set number of Spack parallel install jobs ("spack install -j/--jobs")'
     require: false
     default: 2
+  spack-root:
+    description: 'Spack root directory name'
+    require: false
+    default: 'spack-root'
 
 runs:
   using: "composite"
@@ -68,7 +72,7 @@ runs:
       uses: spack/setup-spack@v2
       with:
         ref: ${{ inputs.spack-ref }}
-        path: spack
+        path: ${{ inputs.spack-root }}
 
     - name: "Update recipe (if needed)"
       if: inputs.custom-recipe != 'none'
@@ -103,4 +107,4 @@ runs:
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
         name: spack-package-test-artifacts-${{ github.sha }}
-        path: ${{ env.SPACK_ROOT }}/var/spack/environments/test/spack.yaml ${{ env.SPACK_ROOT }}/var/spack/environments/test/spack.yaml/spack-concretize.log
+        path: ${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml ${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml/spack-concretize.log
