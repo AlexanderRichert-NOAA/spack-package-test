@@ -107,4 +107,4 @@ runs:
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
         name: spack-package-test-artifacts-${{ github.sha }}
-        path: ${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml ${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml/spack-concretize.log
+        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml ${{ github.workspace}}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml/spack-concretize.log
