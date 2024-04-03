@@ -63,6 +63,10 @@ inputs:
   cache-secret:
     description: 'Secret for build cache'
     required: false
+  unique-id:
+    description: 'Unique ID for artifact name'
+    required: false
+    default: ${{ github.run_id }}
 
 runs:
   using: "composite"
@@ -119,11 +123,24 @@ runs:
       run: |
         spack buildcache push --update-index --only dependencies --unsigned spack-build-cache ${{ inputs.package-name }}
 
+    - name: "Generate unique ID"
+      if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
+      shell: bash
+      run: |
+        if [ -z ${{ inputs.unique-id }} ]; then
+          uniqid=${{ inputs.unique-id }}
+        else
+          uniqid=${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.package-name }}-${{ inputs.package-version }}-${{ inputs.package-variants }}
+          uniqid="$uniqid$(date +%s.%N)"
+          uniqid=$(echo $uniqid | md5sum | awk '{print $1}')
+        fi
+        echo "export uniqid=$uniqid" >> $GITHUB_ENV
+
     - name: "Upload various debug info"
       uses: actions/upload-artifact@v4
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
-        name: spack-package-test-artifacts-${{ github.sha }}-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}
+        name: spack-package-test-artifacts-${{ env.uniqid }}
         path: |
           ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml
           ${{ github.workspace }}/spack-concretize-out.log
