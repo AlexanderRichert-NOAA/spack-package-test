@@ -1,3 +1,9 @@
+# This action.yml provides a GitHub Action for testing modified code
+# repositories through their corresponding Spack recipe (or a custom
+# copy thereof). It does so by downloading Spack, building the modified
+# code through Spack, and running unit tests ("spack install --test").
+#
+# Alex Richert, April 2024
 name: 'Spack package tester'
 description: 'Install and test code through Spack'
 
@@ -20,7 +26,7 @@ inputs:
     description: 'Spack packages to also run unit tests for (space-delimited list with variants)'
     required: false
   use-build-cache:
-    description: 'Create build cache and save to GitHub Packages'
+    description: 'Create build cache of dependencies and save to GitHub Packages'
     required: false
     default: true
   upload-artifacts:
@@ -117,7 +123,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: ( failure() && inputs.upload-artifacts == 'on-failure' ) || inputs.upload-artifacts == 'always'
       with:
-        name: spack-package-test-artifacts-${{ github.sha }}-${{ github.run_id }}
+        name: spack-package-test-artifacts-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
         path: |
           ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.yaml
           ${{ github.workspace }}/spack-concretize-out.log
