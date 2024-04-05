@@ -19,7 +19,7 @@ inputs:
     description: 'Variants to apply to package spec'
     required: false
   custom-recipe:
-    description: 'Path to custom recipe for package to be tested'
+    description: 'Path to custom recipe for package to be tested, relative to repo root'
     required: false
     default: 'none'
   dependents-to-test:
@@ -93,7 +93,7 @@ runs:
       if: inputs.custom-recipe != 'none'
       shell: bash
       run: |
-        cp ${{ inputs.custom-recipe }} ${SPACK_ROOT}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
+        cp spack-devpkg-${{ inputs.package-name }}/${{ inputs.custom-recipe }} ${SPACK_ROOT}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
@@ -127,13 +127,13 @@ runs:
       shell: bash
       run: |
         if [ -z ${{ inputs.unique-id }} ]; then
-          uniqid="${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.package-name }}-${{ inputs.package-version }}-${{ inputs.package-variants }}"
+          uniqid="${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.package-name }}-${{ inputs.package-version }}-${{ inputs.package-variants }}"
           uniqid="$uniqid$(date +%s.%N)"
-          uniqid=$(echo $uniqid | md5sum | awk '{print $1}')
+          uniqid="${{ github.sha }}-$(echo $uniqid | md5sum | awk '{print $1}')"
         else
           uniqid=${{ inputs.unique-id }}
         fi
-        echo "export uniqid=$uniqid" >> $GITHUB_ENV
+        echo "uniqid=$uniqid" >> $GITHUB_ENV
 
     - name: "Upload various debug info"
       uses: actions/upload-artifact@v4
