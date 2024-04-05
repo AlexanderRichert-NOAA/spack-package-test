@@ -66,7 +66,6 @@ inputs:
   unique-id:
     description: 'Unique ID for artifact name'
     required: false
-    default: ${{ github.run_id }}
 
 runs:
   using: "composite"
@@ -128,7 +127,7 @@ runs:
       shell: bash
       run: |
         if [ -z ${{ inputs.unique-id }} ]; then
-          uniqid='${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.package-name }}-${{ inputs.package-version }}-${{ inputs.package-variants }}'
+          uniqid="${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.package-name }}-${{ inputs.package-version }}-${{ inputs.package-variants }}"
           uniqid="$uniqid$(date +%s.%N)"
           uniqid=$(echo $uniqid | md5sum | awk '{print $1}')
         else
