@@ -57,7 +57,7 @@ inputs:
     required: false
     default: 2
   spack-root:
-    description: 'Spack root directory name'
+    description: 'Spack root directory'
     required: false
     default: 'spack-root'
   cache-secret:
@@ -78,7 +78,7 @@ runs:
         path: spack-devpkg-${{ inputs.package-name }}
 
     - name: "Point to existing code if needed"
-      if: inputs.repo-dir == 'auto'
+      if: inputs.repo-dir != 'auto'
       shell: bash
       run: |
         ln -s ${{ inputs.repo-dir }} spack-devpkg-${{ inputs.package-name }}
@@ -93,6 +93,7 @@ runs:
       if: inputs.custom-recipe != 'none'
       shell: bash
       run: |
+        mkdir -p ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/
         cp spack-devpkg-${{ inputs.package-name }}/${{ inputs.custom-recipe }} ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
     - name: "Do Spack installation and tests"
