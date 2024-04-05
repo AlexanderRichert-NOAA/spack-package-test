@@ -16,7 +16,7 @@ This repository supports [NCEPLIBS](https://github.com/NOAA-EMC/NCEPLIBS) CI
 workflows.
 
 Features:
-- Build caching through GitHub Packages (enabled by default)
+- Build caching of dependencies through GitHub Packages (enabled by default)
 - Supports compiling and unit testing downstream dependents through Spack to
   enhance code testing
 - Supports custom Spack recipes (must be contained within the same repository),
