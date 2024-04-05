@@ -24,10 +24,10 @@ Features:
   repository
 
 To submit bug reports, feature requests, or other code-related issues including
-installation and usage questions, please create a [GitHub
-issue](https://github.com/NOAA-EMC/spack-package-test/issues). For general NCEPLIBS
-inquiries, contact [Ed Hartnett](mailto:edward.hartnett@noaa.gov) (secondary
-point of contact [Alex Richert](mailto:alexander.richert@noaa.gov)).
+usage questions, please create a [GitHub
+issue](https://github.com/NOAA-EMC/spack-package-test/issues). For general
+NCEPLIBS inquiries, contact [Ed Hartnett](mailto:edward.hartnett@noaa.gov)
+(secondary point of contact [Alex Richert](mailto:alexander.richert@noaa.gov)).
 
 ### Authors
 
@@ -48,6 +48,8 @@ for a code to be built and tested as a Spack package:
         custom-recipe: spack/package.py
         spack-ref: v0.21.2
 ```
+
+See `actions.yml` for the full list of available options and their defaults.
 
 ## Disclaimer
 
