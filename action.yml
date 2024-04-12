@@ -101,7 +101,7 @@ runs:
       run: |
         if [ "${{ inputs.use-build-cache }}" == true ]; then
           spack mirror add spack-build-cache oci://ghcr.io/${{ github.repository_owner }}/spack-build-cache
-          spack mirror set --oci-username ${{ github.repository_owner }} --oci-password "${{ inputs.cache-secret }}" spack-build-cache
+          spack mirror set --oci-username ${{ github.actor }} --oci-password "${{ inputs.cache-secret }}" spack-build-cache
         fi
         spack env create test
         spack env activate test
