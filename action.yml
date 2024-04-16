@@ -96,6 +96,13 @@ runs:
         mkdir -p ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/
         cp spack-devpkg-${{ inputs.package-name }}/${{ inputs.custom-recipe }} ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ inputs.cache-secret }}
+
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
