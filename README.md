@@ -1,4 +1,4 @@
-# spack-package-test
+# GitHub CI Action: test-spack-package
 
 This repository provides a GitHub Action for building and testing packages
 through the [Spack package manager](https://spack.io). It achieves this by
@@ -25,7 +25,7 @@ Features:
 
 To submit bug reports, feature requests, or other code-related issues including
 usage questions, please create a [GitHub
-issue](https://github.com/NOAA-EMC/spack-package-test/issues). For general
+issue](https://github.com/NOAA-EMC/ci-test-spack-package/issues). For general
 NCEPLIBS inquiries, contact [Ed Hartnett](mailto:edward.hartnett@noaa.gov)
 (secondary point of contact [Alex Richert](mailto:alexander.richert@noaa.gov)).
 
@@ -39,7 +39,7 @@ To use this Action, include the following step in your GitHub Actions workflow
 for a code to be built and tested as a Spack package:
 ```
     - name: "Test with Spack"
-      uses: NOAA-EMC/spack-package-test@v2.0
+      uses: NOAA-EMC/ci-test-spack-package@v2.0
       with:
         package-name: foo
         package-variants: ${{ matrix.variants-to-test }}
