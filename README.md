@@ -39,7 +39,7 @@ To use this Action, include the following step in your GitHub Actions workflow
 for a code to be built and tested as a Spack package:
 ```
     - name: "Test with Spack"
-      uses: NOAA-EMC/ci-test-spack-package@v2.0
+      uses: NOAA-EMC/ci-test-spack-package@develop
       with:
         package-name: foo
         package-variants: ${{ matrix.variants-to-test }}
