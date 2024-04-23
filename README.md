@@ -49,7 +49,7 @@ for a code to be built and tested as a Spack package:
         spack-ref: v0.21.2
 ```
 
-See `actions.yml` for the full list of available options and their defaults.
+See `action.yml` for the full list of available options and their defaults.
 
 ## Disclaimer
 
