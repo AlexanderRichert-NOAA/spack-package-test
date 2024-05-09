@@ -118,7 +118,7 @@ runs:
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
 
     - name: "Update Spack build cache"
-      if: inputs.use-build-cache
+      if: ${{ inputs.use-build-cache == 'true' }}
       shell: spack-bash {0}
       run: |
         spack buildcache push --update-index --only dependencies --unsigned spack-build-cache ${{ inputs.package-name }}
