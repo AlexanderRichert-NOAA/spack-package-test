@@ -115,7 +115,7 @@ runs:
       uses: actions/cache@v4
       if: inputs.cache-spack-lock == 'true'
       with:
-        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/
+        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/spack.lock
         key: spack-lock-cache-${{ inputs.repo-cache-key-suffix }}
 
     - name: "Do Spack installation and tests"
