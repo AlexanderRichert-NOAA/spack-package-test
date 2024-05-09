@@ -71,6 +71,9 @@ inputs:
   repo-cache-key-suffix:
     description: 'String to append to repo-level cache key'
     default: 1
+  cache-spack-lock:
+    description: 'Cache spack.lock to speed up concretization'
+    default: true
 
 runs:
   using: "composite"
@@ -108,6 +111,13 @@ runs:
         path: ${{ github.workspace }}/spack-build-cache
         key: repo-cache-${{ inputs.repo-cache-key-suffix }}
 
+    - name: "Cache spack.lock"
+      uses: actions/cache@v4
+      if: inputs.cache-spack-lock == 'true'
+      with:
+        path: ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/
+        key: spack-lock-cache-${{ inputs.repo-cache-key-suffix }}
+
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
@@ -135,6 +145,7 @@ runs:
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack buildcache push --only dependencies --unsigned --allow-root $GITHUB_WORKSPACE/spack-build-cache ${{ inputs.package-name }}
         fi
+
     - name: "Update Spack build cache"
       if: ${{ inputs.use-build-cache == 'true' }}
       shell: spack-bash {0}
