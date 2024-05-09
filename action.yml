@@ -137,7 +137,7 @@ runs:
           spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then spack external find ${{ inputs.spack-externals }}; fi
-        if [[ "${{ inputs.cache-spack-lock }" == true && -f $SPACK_ROOT/spack.lock ]]; then
+        if [[ "${{ inputs.cache-spack-lock }}" == true && -f $SPACK_ROOT/spack.lock ]]; then
           cp $SPACK_ROOT/spack.lock $SPACK_ENV/.
         fi
         spack concretize 2> ${GITHUB_WORKSPACE}/spack-concretize-err.log 1> ${GITHUB_WORKSPACE}/spack-concretize-out.log
