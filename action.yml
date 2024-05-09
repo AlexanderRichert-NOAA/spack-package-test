@@ -27,8 +27,7 @@ inputs:
     required: false
   use-build-cache:
     description: 'Create build cache of dependencies and save to GitHub Packages'
-    required: false
-    default: true
+    default: false
   upload-artifacts:
     description: 'Upload certain logs on job failure (options: always, never, on-failure)'
     required: false
@@ -66,6 +65,12 @@ inputs:
   unique-id:
     description: 'Unique ID for artifact name'
     required: false
+  use-repo-cache:
+    description: 'Enable repo-level caching'
+    default: false
+  repo-cache-key-suffix:
+    description: 'String to append to repo-level cache key'
+    default: 1
 
 runs:
   using: "composite"
@@ -96,12 +101,22 @@ runs:
         mkdir -p ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/
         cp spack-devpkg-${{ inputs.package-name }}/${{ inputs.custom-recipe }} ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
+    - name: "Setup repo-level caching"
+      uses: actions/cache@v4
+      if: inputs.use-repo-cache == 'true'
+      with:
+        path: ${{ github.workspace }}/spack-build-cache
+        key: repo-cache-${{ inputs.repo-cache-key-suffix }}
+
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
         if [ "${{ inputs.use-build-cache }}" == true ]; then
           spack mirror add spack-build-cache oci://ghcr.io/NOAA-EMC/spack-build-cache
           spack mirror set --oci-username NOAA-EMC --oci-password "${{ inputs.cache-secret }}" spack-build-cache
+        fi
+        if [ "${{ inputs.use-repo-cache }}" == true ]; then
+          spack mirror add spack-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
         spack env create test
         spack env activate test
@@ -116,7 +131,9 @@ runs:
         cat ${GITHUB_WORKSPACE}/spack-concretize-out.log
         realpath ${SPACK_ENV}/spack.yaml
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
-
+        if [ "${{ inputs.use-repo-cache }}" == true ]; then
+          spack buildcache push --only dependencies --unsigned --allow-root $GITHUB_WORKSPACE/spack-build-cache ${{ inputs.package-name }}
+        fi
     - name: "Update Spack build cache"
       if: ${{ inputs.use-build-cache == 'true' }}
       shell: spack-bash {0}
