@@ -74,6 +74,9 @@ inputs:
   cache-spack-lock:
     description: 'Cache spack.lock to speed up concretization'
     default: true
+  test-package-load:
+    description: 'Run "spack load <package-name>" to verify setup_run_environment() does not fail'
+    default: true
 
 runs:
   using: "composite"
@@ -149,6 +152,9 @@ runs:
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack buildcache push --only dependencies --unsigned --allow-root $GITHUB_WORKSPACE/spack-build-cache ${{ inputs.package-name }}
+        fi
+        if [ ${{ inputs.test-package-load }} == true ]; then
+          spack load ${{ inputs.package-name }}
         fi
 
     - name: "Update Spack build cache"
