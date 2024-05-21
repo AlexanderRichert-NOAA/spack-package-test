@@ -67,7 +67,7 @@ inputs:
     required: false
   use-repo-cache:
     description: 'Enable repo-level caching'
-    default: false
+    default: true
   repo-cache-key-suffix:
     description: 'String to append to repo-level cache key'
     default: 1
