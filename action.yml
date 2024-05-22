@@ -141,13 +141,13 @@ runs:
         fi
         if [ ! -z "${{ inputs.spack-externals }}" ]; then
           for package in ${{ inputs.spack-externals }}; do
+            spack config add "packages:$package:buildable:false"
             if [[ ($package == openblas) && ( ${{ runner.os }} == Linux ) ]]; then
               package="--path /usr/lib/x86_64-linux-gnu/openblas-serial openblas"
               spack config add "packages:lapack:buildable:false"
               spack config add "packages:blas:buildable:false"
             fi
             spack external find $package
-            spack config add "packages:$package:buildable:false"
           done
         fi
         if [[ "${{ inputs.cache-spack-lock }}" == true && -f $SPACK_ROOT/spack.lock ]]; then
