@@ -197,3 +197,5 @@ runs:
           ${{ github.workspace }}/spack-concretize-err.log
           ${{ github.workspace }}/${{ inputs.spack-root }}/var/spack/environments/test/${{ inputs.package-name }}/spack-build-*/Testing/Temporary/LastTest.log
           /tmp/runner/spack-stage/spack-stage-*/spack-build-out.txt
+          /tmp/runner/spack-stage/spack-stage-*/install-time-test-log.txt
+          /tmp/runner/spack-stage/spack-stage-*/spack-build-*/Testing/Temporary/LastTest.log
