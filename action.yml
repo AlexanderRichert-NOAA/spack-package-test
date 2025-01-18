@@ -43,7 +43,7 @@ inputs:
   cpu-target:
     description: 'Spack CPU target'
     required: false
-    default: 'x86_64'
+    default: ''
   spack-externals:
     description: 'External packages for Spack to try to use'
     required: false
@@ -137,7 +137,10 @@ runs:
         spack env create --without-view test
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
-        spack add ${{ inputs.package-name }}@${{ inputs.package-version }} ${{ inputs.package-variants }} target=${{ inputs.cpu-target }} ${{ inputs.dependents-to-test }}
+        spack add ${{ inputs.package-name }}@${{ inputs.package-version }} ${{ inputs.package-variants }} ${{ inputs.dependents-to-test }}
+        if [ ! -z "${{ inputs.cpu-target }}" ]; then
+          spack config add "packages:all:require:'target=${{ inputs.cpu-target }} '"
+        fi
         if [ ! -z "${{ inputs.spack-compiler }}" ]; then
           spack compiler find ${{ inputs.spack-compiler }}
           spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
