@@ -160,7 +160,7 @@ runs:
         fi
         cat ${GITHUB_WORKSPACE}/spack-concretize-out.log
         realpath ${SPACK_ENV}/spack.yaml
-        spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature --cache-only
+        spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack buildcache push --only dependencies --unsigned $GITHUB_WORKSPACE/spack-build-cache ${{ inputs.package-name }}
         fi
