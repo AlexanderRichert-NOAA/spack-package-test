@@ -132,8 +132,7 @@ runs:
           spack mirror add spack-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
         spack mirror list
-        spack mirror remove spack-public
-        spack mirror remove spack-build-cache
+        spack mirror remove github-actions-buildcache
         spack mirror add emc-build-cache oci://ghcr.io/AlexanderRichert-NOAA/ci-playground
         spack env create --without-view test
         spack env activate test
