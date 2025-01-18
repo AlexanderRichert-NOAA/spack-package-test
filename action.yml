@@ -95,7 +95,7 @@ runs:
         ln -s ${{ inputs.repo-dir }} spack-devpkg-${{ inputs.package-name }}
 
     - name: "Get Spack"
-      uses: spack/setup-spack@v2
+      uses: spack/setup-spack@v2.1.1
       with:
         ref: ${{ inputs.spack-ref }}
         path: ${{ inputs.spack-root }}
