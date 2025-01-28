@@ -176,6 +176,7 @@ runs:
 
     - name: "Delete cache"
       if: steps.restore-repo-cache.cache-hit
+      shell: bash
       run: |
         gh cache delete repo-cache-${{ inputs.repo-cache-key-suffix }}
 
