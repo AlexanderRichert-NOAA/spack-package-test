@@ -87,7 +87,7 @@ runs:
       if: inputs.repo-dir == 'auto'
       with: 
         path: spack-devpkg-${{ inputs.package-name }}
-        submodules: true
+        submodules: recursive
 
     - name: "Point to existing code if needed"
       if: inputs.repo-dir != 'auto'
