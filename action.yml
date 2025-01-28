@@ -110,6 +110,7 @@ runs:
 
     - name: "Restore repo-level cache"
       uses: actions/cache/restore@v4
+      id: restore-repo-cache
       if: inputs.use-repo-cache == 'true'
       with:
         path: ${{ github.workspace }}/spack-build-cache
@@ -172,6 +173,11 @@ runs:
           spack load ${{ inputs.package-name }}
         fi
         exit $rc
+
+    - name: "Delete cache"
+      if: steps.restore-repo-cache.cache-hit
+      run: |
+        gh cache delete repo-cache-${{ inputs.repo-cache-key-suffix }}
 
     - name: "Save repo-level cache"
       uses: actions/cache/save@v4
