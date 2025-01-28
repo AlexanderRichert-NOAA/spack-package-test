@@ -108,8 +108,8 @@ runs:
         mkdir -p ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/
         cp spack-devpkg-${{ inputs.package-name }}/${{ inputs.custom-recipe }} ${{ inputs.spack-root }}/var/spack/repos/builtin/packages/${{ inputs.package-name }}/package.py
 
-    - name: "Setup repo-level caching"
-      uses: actions/cache@v4
+    - name: "Restore repo-level cache"
+      uses: actions/cache/restore@v4
       if: inputs.use-repo-cache == 'true'
       with:
         path: ${{ github.workspace }}/spack-build-cache
@@ -172,6 +172,13 @@ runs:
           spack load ${{ inputs.package-name }}
         fi
         return $rc
+
+    - name: "Save repo-level cache"
+      uses: actions/cache/save@v4
+      if: always() && inputs.use-repo-cache == 'true'
+      with:
+        path: ${{ github.workspace }}/spack-build-cache
+        key: repo-cache-${{ inputs.repo-cache-key-suffix }}
 
     - name: "Update Spack build cache"
       if: ${{ inputs.use-build-cache == 'true' }}
