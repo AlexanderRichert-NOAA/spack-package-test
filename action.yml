@@ -175,7 +175,7 @@ runs:
         exit $rc
 
     - name: "Delete cache"
-      if: steps.restore-repo-cache.cache-hit
+      if: always() && steps.restore-repo-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
         gh cache delete repo-cache-${{ inputs.repo-cache-key-suffix }}
