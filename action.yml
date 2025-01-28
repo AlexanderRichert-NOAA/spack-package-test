@@ -161,13 +161,17 @@ runs:
         fi
         cat ${GITHUB_WORKSPACE}/spack-concretize-out.log
         realpath ${SPACK_ENV}/spack.yaml
+        set +e
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
+        rc=$?
+        set -e
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack buildcache push --only dependencies --unsigned $GITHUB_WORKSPACE/spack-build-cache ${{ inputs.package-name }}
         fi
         if [ ${{ inputs.test-package-load }} == true ]; then
           spack load ${{ inputs.package-name }}
         fi
+        return $rc
 
     - name: "Update Spack build cache"
       if: ${{ inputs.use-build-cache == 'true' }}
