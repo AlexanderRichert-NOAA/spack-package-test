@@ -51,6 +51,10 @@ for a code to be built and tested as a Spack package:
 
 See `action.yml` for the full list of available options and their defaults.
 
+In order to use the repo-level caching of compiled packages, `permissions:actions:write`
+must be set at the job level (this enables an existing cache to be deleted and
+overwritten).
+
 ## Disclaimer
 
 The United States Department of Commerce (DOC) GitHub project code is provided
