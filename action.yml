@@ -143,12 +143,10 @@ runs:
           spack compiler find ${{ inputs.spack-compiler }}
           spack config add "packages:all:require:'%${{ inputs.spack-compiler }}'"
         fi
-        if [ ! -z "${{ inputs.spack-externals }}" ]; then
-          if [ "${{ inputs.use-common-build-cache }}" != true ]; then
-            for package in ${{ inputs.spack-externals }}; do
-              spack config add "packages:$package:buildable:false"
-            done
-          fi
+        if [[ ! -z "${{ inputs.spack-externals }}" && "${{ inputs.use-common-build-cache }}" != true ]]; then
+          for package in ${{ inputs.spack-externals }}; do
+            spack config add "packages:$package:buildable:false"
+          done
           if [[ (" ${{ inputs.spack-externals }} " =~ " openblas ") && ( ${{ runner.os }} == Linux ) ]]; then
             spack external find --path /usr/lib/x86_64-linux-gnu/openblas-serial openblas
             if [ "${{ inputs.use-common-build-cache }}" != true ]; then
