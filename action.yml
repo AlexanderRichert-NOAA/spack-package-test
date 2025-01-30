@@ -124,8 +124,6 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
-        echo "${{ inputs.use-repo-cache }}"
-        echo "${{ inputs.use-common-build-cache }}"
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
         fi
@@ -153,7 +151,7 @@ runs:
           fi
           if [[ (" ${{ inputs.spack-externals }} " =~ " openblas ") && ( ${{ runner.os }} == Linux ) ]]; then
             spack external find --path /usr/lib/x86_64-linux-gnu/openblas-serial openblas
-            if [ "${{ inputs.use-common-build-cache" }} != true ]; then
+            if [ "${{ inputs.use-common-build-cache }}" != true ]; then
               spack config add "packages:lapack:buildable:false"
               spack config add "packages:blas:buildable:false"
             fi
