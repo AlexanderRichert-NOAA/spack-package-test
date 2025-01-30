@@ -124,6 +124,8 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
+        echo "${{ inputs.use-repo-cache }}"
+        echo "${{ inputs.use-common-build-cache }}"
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
         fi
