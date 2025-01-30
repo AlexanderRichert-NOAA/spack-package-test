@@ -74,6 +74,9 @@ inputs:
   test-package-load:
     description: 'Run "spack load <package-name>" to verify setup_run_environment() does not fail'
     default: true
+  cache-secret:
+    description: 'Cache secret (GITHUB_TOKEN)'
+    default: ''
 
 runs:
   using: "composite"
@@ -123,7 +126,7 @@ runs:
       run: |
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
-          OCIUSER=NOAA-EMC OCIPASSWORD=${{ github.token }} spack mirror set --oci-username-variable OCIUSER --oci-password-variable OCIPASSWORD emc-common-build-cache
+          OCIUSER=NOAA-EMC OCIPASSWORD=${{ inputs.cache-secret }} spack mirror set --oci-username-variable OCIUSER --oci-password-variable OCIPASSWORD emc-common-build-cache
         fi
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
