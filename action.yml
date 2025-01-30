@@ -131,6 +131,7 @@ runs:
           spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
         spack mirror list
+        spack buildcache list --allarch
         spack mirror remove github-actions-buildcache
         spack env create --without-view test
         spack env activate test
