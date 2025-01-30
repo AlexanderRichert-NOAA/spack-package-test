@@ -59,9 +59,6 @@ inputs:
     description: 'Spack root directory'
     required: false
     default: 'spack-root'
-  cache-secret:
-    description: 'Secret for build cache'
-    required: false
   unique-id:
     description: 'Unique ID for artifact name'
     required: false
@@ -126,13 +123,13 @@ runs:
       run: |
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
+          OCIUSER=NOAA-EMC OCIPASSWORD=${{ github.token }} spack mirror set --oci-username-variable OCIUSER --oci-password-variable OCIPASSWORD emc-common-build-cache
         fi
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
-        spack mirror list
-        spack buildcache list --allarch
         spack mirror remove github-actions-buildcache
+        spack mirror list
         spack env create --without-view test
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
