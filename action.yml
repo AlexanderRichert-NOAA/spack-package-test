@@ -127,7 +127,7 @@ runs:
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
           export OCIUSER=NOAA-EMC
-          export OCIPASSWORD="${{ inputs.cache-secret }}"
+          export OCIPASSWORD="${{ github.token }}"
           spack mirror set --oci-username OCIUSER --oci-password-variable OCIPASSWORD emc-common-build-cache
         fi
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
