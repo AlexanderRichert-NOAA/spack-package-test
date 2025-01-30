@@ -27,7 +27,7 @@ inputs:
     required: false
   use-common-build-cache:
     description: 'Use NOAA-EMC/ci-common-build-cache GitHub Packages binary mirror'
-    default: false
+    default: true
   upload-artifacts:
     description: 'Upload certain logs on job failure (options: always, never, on-failure)'
     required: false
