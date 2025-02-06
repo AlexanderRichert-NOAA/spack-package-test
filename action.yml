@@ -135,15 +135,15 @@ runs:
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
           spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
+        spack mirror remove github-actions-buildcache
         spack mirror list
         #spack buildcache list --allarch # for debugging
-        spack mirror remove github-actions-buildcache
         spack env create --without-view test
         spack env activate test
         spack develop --no-clone --path ${GITHUB_WORKSPACE}/spack-devpkg-${{ inputs.package-name }} ${{ inputs.package-name }}@${{ inputs.package-version }}
         spack add ${{ inputs.package-name }}@${{ inputs.package-version }} ${{ inputs.package-variants }} ${{ inputs.dependents-to-test }}
         if [ ! -z "${{ inputs.cpu-target }}" ]; then
-          spack config add "packages:all:require:'target=${{ inputs.cpu-target }} '"
+          spack config add "packages:all:require:'target=${{ inputs.cpu-target }}'"
         fi
         if [ ! -z "${{ inputs.spack-compiler }}" ]; then
           spack compiler find ${{ inputs.spack-compiler }}
@@ -168,7 +168,9 @@ runs:
           cp $SPACK_ENV/spack.lock ${{ inputs.spack-root }}/.
         fi
         cat ${GITHUB_WORKSPACE}/spack-concretize-out.log
-        realpath ${SPACK_ENV}/spack.yaml
+        echo -e "spack.yaml:\n========="
+        cat ${SPACK_ENV}/spack.yaml
+        echo "========="
         set +e
         spack install --jobs ${{ inputs.parallel-jobs }} --test root --no-check-signature
         rc=$?
