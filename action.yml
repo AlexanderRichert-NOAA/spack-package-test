@@ -136,7 +136,7 @@ runs:
           spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
         spack mirror list
-        spack buildcache list --allarch
+        #spack buildcache list --allarch # for debugging
         spack mirror remove github-actions-buildcache
         spack env create --without-view test
         spack env activate test
@@ -155,10 +155,8 @@ runs:
           done
           if [[ (" ${{ inputs.spack-externals }} " =~ " openblas ") && ( ${{ runner.os }} == Linux ) ]]; then
             spack external find --path /usr/lib/x86_64-linux-gnu/openblas-serial openblas
-            if [ "${{ inputs.use-common-build-cache }}" != true ]; then
-              spack config add "packages:lapack:buildable:false"
-              spack config add "packages:blas:buildable:false"
-            fi
+            spack config add "packages:lapack:buildable:false"
+            spack config add "packages:blas:buildable:false"
           fi
           spack external find $(echo ${{ inputs.spack-externals }} | sed "s:\bopenblas\b::g")
         fi
