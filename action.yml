@@ -127,14 +127,14 @@ runs:
     - name: "Do Spack installation and tests"
       shell: spack-bash {0}
       run: |
+        if [ "${{ inputs.use-repo-cache }}" == true ]; then
+          spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
+        fi
         if [ "${{ inputs.use-common-build-cache }}" == true ]; then
           spack mirror add emc-common-build-cache oci://ghcr.io/NOAA-EMC/ci-common-build-cache
           export OCIUSER=NOAA-EMC
           export OCIPASSWORD="${{ github.token }}"
           spack mirror set --oci-username OCIUSER --oci-password-variable OCIPASSWORD emc-common-build-cache
-        fi
-        if [ "${{ inputs.use-repo-cache }}" == true ]; then
-          spack mirror add repo-build-cache $GITHUB_WORKSPACE/spack-build-cache
         fi
         spack mirror remove github-actions-buildcache
         spack mirror list
