@@ -43,7 +43,7 @@ inputs:
   cpu-target:
     description: 'Spack CPU target'
     required: false
-    default: ''
+    default: 'x86_64'
   spack-externals:
     description: 'External packages for Spack to try to use'
     required: false
