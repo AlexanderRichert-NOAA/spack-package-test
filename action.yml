@@ -183,6 +183,7 @@ runs:
       if: always() && steps.restore-repo-cache.outputs.cache-hit == 'true'
       shell: bash
       run: |
+        gh extension install actions/gh-actions-cache
         GH_TOKEN=${{ github.token }} GH_REPO=$GITHUB_REPOSITORY gh actions-cache delete "repo-cache-${{ inputs.repo-cache-key-suffix }}" --confirm
 
     - name: "Save repo-level cache"
