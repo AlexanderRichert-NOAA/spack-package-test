@@ -179,15 +179,6 @@ runs:
         fi
         exit $rc
 
-    - name: "Delete cache"
-      if: always() && steps.restore-repo-cache.outputs.cache-hit == 'true'
-      shell: bash
-      env:
-        GH_TOKEN: ${{ github.token }}
-        GH_REPO: ${{ github.repository }}
-      run: |
-        gh cache delete "repo-cache-${{ inputs.repo-cache-key-suffix }}"
-
     - name: "Save repo-level cache"
       uses: actions/cache/save@v4
       if: always() && inputs.use-repo-cache == 'true'
