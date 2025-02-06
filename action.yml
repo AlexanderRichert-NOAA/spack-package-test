@@ -186,7 +186,7 @@ runs:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
       run: |
-        gh cache delete "repo-cache-${{ inputs.repo-cache-key-suffix }}" --confirm
+        gh cache delete "repo-cache-${{ inputs.repo-cache-key-suffix }}"
 
     - name: "Save repo-level cache"
       uses: actions/cache/save@v4
