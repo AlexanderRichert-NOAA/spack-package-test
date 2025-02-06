@@ -174,7 +174,7 @@ runs:
         rc=$?
         set -e
         if [ "${{ inputs.use-repo-cache }}" == true ]; then
-          spack buildcache push --unsigned $GITHUB_WORKSPACE/spack-build-cache $(spack find --format '{name}' | grep -v ${{ inputs.package-name }})
+          spack buildcache push --unsigned $GITHUB_WORKSPACE/spack-build-cache $(spack find --format '{name}/{hash:7}' | grep -v ${{ inputs.package-name }})
         fi
         if [ ${{ inputs.test-package-load }} == true ]; then
           spack load ${{ inputs.package-name }}
